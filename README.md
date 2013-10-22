@@ -1,0 +1,1 @@
+SQLをフィルタリングできるpostgresql proxyです。
