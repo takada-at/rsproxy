@@ -56,6 +56,11 @@ def test_filter_query_string():
     result8, = filterobj.filter_query_string(sql)
     assert result8[0]==False
 
+    # SELECT節にサブクエリ
+    sql = 'SELECT column0, (SELECT 1) FROM dau AS d'
+    result9, = filterobj.filter_query_string(sql)
+    assert result9[0]==False
+
 def test_get_table_name():
     sql = 'SELECT a,b,c FROM dau'
     statement, = sqlparse.parse(sql)
@@ -99,3 +104,4 @@ def test_get_table_name():
     result7 = queryfilter.get_table_name(statement)
     assert isinstance(result7, sqlparse.sql.Identifier)
     assert result7.value == 'dau'
+

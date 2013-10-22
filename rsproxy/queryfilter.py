@@ -49,11 +49,15 @@ def filter_statement(statement, expected_conditions, tables):
 
     target_table = get_table_name(statement)
     if isinstance(target_table, ValueError):
-        return (False, ValueError)
+        return (False, target_table)
     else:
         tablename = target_table.value
         if tablename not in tables:
             return (False, ValueError('invalid table name: %s' % tablename))
+
+    select_expr_check = check_select_expr(statement)
+    if isinstance(select_expr_check, ValueError):
+        return (False, select_expr_check)
 
     tokens = [token for token in where_clause.tokens if not token.is_whitespace()]
     conditions = split_tokens(tokens[1:], 'AND')
@@ -69,6 +73,16 @@ def filter_statement(statement, expected_conditions, tables):
 
 def get_statement_type(statement):
     return statement.get_type()
+
+def check_select_expr(statement):
+    tokens = [token for token in statement.tokens if not token.is_whitespace()]
+    splitted   = split_tokens(tokens, 'FROM')
+    tokens     = splitted[0][1:]
+    for token in tokens:
+        if isinstance(token, Parenthesis):
+            return ValueError('invalid select expr')
+
+    return tokens
 
 def get_table_name(statement):
     tokens = [token for token in statement.tokens if not token.is_whitespace()]

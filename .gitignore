@@ -1,3 +1,4 @@
 ./LOCAL
 \#*#
 *.pyc
+./run_dev.py
